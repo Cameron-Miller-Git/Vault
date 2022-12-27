@@ -1,0 +1,237 @@
+---
+title: "HW4_Group11_CameronMiller"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+date: "2022-10-04"
+---
+
+```{r setup, comment=NA}
+knitr::opts_chunk$set(comment=NA)
+
+library(wooldridge)
+library(dplyr)
+library(stargazer)
+
+```
+
+# Question 1
+## i
+
+for every 1% increase in distance from the incinerator, the price will increase by .132%
+
+## ii
+
+Location, neighborhood, income, etc. Yes, there may be some correlation. Because places like garbage dumps are more likely to be placed in areas of low income there is a correlation between neighborhood type on garbage incinerator.
+
+## iii
+
+This violates the Zero conditional mean assumption because the explanatory variable contains information about the unobserved factors. 
+
+# Question 2
+
+## i
+
+$E(u|inc)=E\sqrt(inc)*e|inc)=\sqrt(inc)*E(e|inc)=\sqrt(inc)*0$ because $E(e|inc)=0$
+
+## ii
+
+$var(u|inc) = var(\sqrt(inc).e|inc)=(\sqrt(inc)^2var(e|inc))=\sigma^2_e inc$
+
+# iii
+
+low income families dont have much choice when it comes to saving. They most spend their money on necessities like food, clothing, and shleter. High income families have more choice, and some might chooose to still spend only on necessities and save, while others choose tospend more. 
+
+# Question 3
+
+
+## i
+
+```{r}
+
+df1 <- k401k
+summary(df1)
+
+
+```
+
+Average participation rate 87.36%, average match rate is .7315
+
+## ii
+
+```{r}
+
+reg_norm <- lm(prate ~ mrate, df1)
+
+
+stargazer(reg_norm, type="text")
+
+```
+
+$\hat{prate} = 83.075 + 5.861log(mrate), n=1534, R^2=0.075$
+
+## iii
+
+83.075% would be the expected participation rate if the match rate was 0. The coefficient of mrate is positive at 5.861 showing that as mrate increases so does prate such that for a dollar increase in mrate the prate increases by 5.861%
+
+
+
+
+## iv 
+
+```{r}
+
+prate <- function(mrate){83.075+5.861*mrate}
+
+prate(3.5)
+
+```
+having a mrate=3.5 creates an unrealistic 103% participation rate which does not seem reasonable as the maximum participation rate possible is 100%. This occurs because we are attempting to apply a linear relationship between match rate and participation rate.  
+
+## v
+the R-squared of 0.075 is fraction of the total variation of prate that is explained by mrat. we would expect that the more the employer contributes the more the participation rate would be
+
+# Question 4
+
+## i
+
+It would not make sense for the relationship between pass rate and expenditure to have a linear relationship. At a certain point no matter how much you spend, you will no longer be increasing pass rate in any significant way. 
+
+## ii
+
+simply level-log regressions look at the unit change of the estimated variable based on the percent change of the explanatory variable. math10 is a percentage by nature so we are looking at the % change of math10. Considering $\beta_1/10 \rightarrow 10/10 \rightarrow 1$% change in math10 with a 10% change in expend
+
+## iii
+```{r}
+df2 <- meap93
+
+regs_3 <- lm(math10 ~ log(expend), df2)
+
+stargazer(regs_3, type="text")
+
+```
+
+$math10 = -69.341 + 11.164log(expend), n=408, R^2=0.030$ 
+
+## iv
+
+The spending effect is large suggesting that for every 10% increase in spending we would get a 1.1164% increase in students passing MEAP math
+
+## v recheck
+
+As we are talking about percentages, having level-logs's diminishing effects, as we increase spending we also increase the percentage of students that pass their MEAP math exam. This will have diminishing returns of the total number of students passing as that percentage increases. 
+
+
+
+
+# Question 5
+
+## i
+
+
+
+```{r}
+df3 <- charity
+
+summary(df3)
+
+```
+
+
+```{r}
+count(df3 %>% filter(respond==0))/count(df3)*100
+```
+
+
+the average gift in the sample of 4,268 is 7.44, with 60% of people not giving any gift
+
+
+
+## ii
+```{r}
+summary(df3$mailsyear)
+```
+
+average mailing per year are 2.05 with a maximum of 3.5 and a minimum of 0.25
+## iii
+
+```{r}
+reg_df3 <- lm(gift ~ mailsyear, df3)
+
+stargazer(reg_df3, type="text")
+
+```
+
+$gift=2.014+2.650mailsyear,  n=4268, R^2 = 0.014$
+
+## iv
+
+for every unit increase in number of mailings per year,  we can expect a unit increase in the amount of gift, in guilders
+
+wanting to analyze the costs if we expect each mailing to cost 1 guilder we see that $\beta_1 = 2.650 - 1 = 1.650 > 0$ concluding a profit is made.
+
+however since the 1.650 is a an average, we can expect mailings that are below 1 to generate loss, such as 0.25 and some mailings to contribute more than average such as 3.5
+
+
+# Question 6
+
+## i
+
+```{r}
+
+df4 <- catholic
+
+cath_reg <- lm(math12 ~ read12, df4)
+
+count(df4)
+
+```
+n=7,430
+
+```{r}
+mean(df4$math12)
+sd(df4$math12)
+```
+math12 mean 52.13362
+math12 sd 9.459117
+
+```{r}
+mean(df4$read12)
+sd(df4$read12)
+```
+
+read12 mean 51.7724
+read12 sd 9.407761
+
+## ii
+
+```{r}
+
+stargazer(cath_reg, type="text")
+
+```
+
+$\hat{math12} = 15.153 + 0.714(read12), n=7,430, R^2=0.505$
+
+## iii 
+
+When the reading standardized score is 0 we can interpret the intercept such that that the average expected value for the mathematics standardized score is 15. This is not a realistic or interpretative value.
+
+
+### iv
+
+Not surprised by the $\beta_1$ as we would expect the test scores to increase uniformly amond students who perform well in one sector.   
+
+The $R^2$ does not really surprise me. Similar to the $\beta_1$ we would expect students who are extremely dedicated in one academic realm to be very dedicated in another. having >50% of the variation explained through correlation only makes sense. 
+
+
+### v
+
+```{r}
+reg_oppo <- lm(read12 ~ math12, df4)
+stargazer(reg_oppo, type = "text")
+```
+The regression of read12 on math12 shows the same result as math12 on read12. however there are specific factors behind why read12 and math12 are correlated so hiring more reading tutors would likely not have an effect on math score. 
+
+

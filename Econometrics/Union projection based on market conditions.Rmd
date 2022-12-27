@@ -1,0 +1,49 @@
+---
+title: "Final Project team 3"
+output: html_document
+date: "2022-12-01"
+---
+
+```{r setup, include=FALSE}
+
+###############################################################################
+# Data : We are going to use the dataset beauty!
+
+library(wooldridge)
+library(corrgram)
+library(dplyr)
+help("fringe")
+
+summary(fringe)
+
+# If you have Na's, you have to clean the dataset first by using the following code. 
+
+df <- fringe
+df <- df[complete.cases(df),]
+
+# Excluding variables 
+summary(df1)
+
+df1%>%count(union)
+summary(fringe$union)
+
+df <- select(df, -c(ind1,ind2,ind3,ind4,ind5,ind6,ind7,ind8,ind9,office,vserat,vacdays,sicklve,insur,pension))
+
+corrgram(df, order=TRUE, lower.panel=panel.shade,upper.panel=panel.pie, text.panel=panel.txt,main="Correlations between variables")
+
+
+df1 <- select(fringe,c(annearn,exper,age,union,annbens,tenure))
+corrgram(df1, order=TRUE, lower.panel=panel.shade,upper.panel=panel.pie, text.panel=panel.txt,main="Correlations between variables")
+
+reg0 <- lm(annearn ~ union,df1)
+stargazer(reg0, type = "text")
+
+reg1 <- lm(union ~ annearn+exper+age+annbens+tenure, df1)
+stargazer(reg1, type = "text")
+
+reg2 <- lm(union ~ log(annearn)+log(exper)+log(age)+log(annbens)+log(tenure), df1)
+stargazer(reg2, type = "text")
+
+reg3 <- lm(annearn ~ union + age + exper + )
+
+```

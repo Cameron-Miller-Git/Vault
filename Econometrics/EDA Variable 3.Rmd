@@ -1,0 +1,233 @@
+---
+title: "HW6_G11_CameronMiller"
+output:
+  word_document: default
+  html_document: default
+date: "2022-10-11"
+---
+
+```{r setup, comment=NA}
+knitr::opts_chunk$set(comment=NA)
+
+library(wooldridge)
+library(dplyr)
+library(stargazer)
+
+```
+
+# Question 1
+
+## i
+
+Assuming that no independent variables hold an exact linear relationship, with k+1 observations, we see that $E(\hat{\beta_1})=\beta_1, E(\hat{\beta_2})=\beta_2$ we know $E(\hat{\theta})=E(\hat{\beta_1}+\hat{\beta_2})$ 
+
+## ii
+
+Where $\hat{\theta_1}=\hat{\beta_1}+\hat{\beta_2}$ then $Var(\hat{\theta_1})=Var(\hat{\beta_1}+\hat{\beta_2})$ or  $Var(\hat{\theta_1}=Var(\hat{\beta_1}+\hat{\beta_2})+Cov(\hat{\beta_1}\hat{\beta_2})$ 
+where $Cov(\hat{\beta_1}+\hat{\beta_2}))=2(Corr(\hat{\beta_1},\hat{\beta}))(\sqrt(Var(\hat{\beta_1})+Var(\hat{\beta_1}))$
+
+
+we find that 
+
+$Var(\hat{\theta_1})=Var(\hat{\beta_1})+Var(\hat{\beta_2})+2(Corr(\hat{\beta_1},\hat{\beta}))(\sqrt(Var(\hat{\beta_1})+Var(\hat{\beta_1}))$ 
+
+# Question 2
+
+If you drop avg ability from the model, the coefficient of avg train will become biased
+
+The bias will be negative because we expect beta 2 to be poitive and the correlation to be negative
+
+The beta of the variable we are dropping ($\beta_ 2$) is positive because your ability is positively related to productivity, 
+
+The grants have been given to firms whose workers have less than avg ability, so the correlation is negative
+
+Negative, positive, negative means the correlation is negative, so $\hat{\beta_1}$ has negative bias if we drop ability
+
+
+# question 3
+
+## i 
+
+First equation has $df = 351$
+Second equation has $df = 350$
+The SER decreases because the SSR decreased and they are positively related
+
+
+## ii
+
+It is moderately positive and yes this makes sense because the longer you'd play
+with the team, the more likely you are to be a part of batting runs. 
+$1/(1-.597)$
+
+```{r}
+1/(1-.597)
+```
+
+The variance inflation factor is 2.48.
+
+It is also moderate collinearity between years and rbisyr
+
+
+## iii
+
+having the only variable years does not estimate the salary well. This would make the standard error for the coefficient on years in the multiple regression lower than in the simple regression.
+
+If you lower the variables, then you will have a higher standard error. So, the second regression model has a smaller error as compared to the first regression model.
+
+# Question 4
+
+
+## part i
+
+You cannot change study alone without changing the sum. Since the sum must remain 168, one or more factors along with study would also have to change accordingly. So no, it does not make sense to hold sleep, work, and leisure fixed while only changing study.
+
+## part ii
+
+The assumption is violated in the regression equation because it has the potential for perfect correlation. For example, the variable sleep could be written to equal 168 with all other variables at zero, making it a perfect linear function of all the explanatory variables and thus violating the assumption that there must be no perfect collinearlity among the independent variables. 
+
+## part iii
+
+Since the independent variables cannot be perfectly correlated, the best way to satisfy the assumption is to get rid of one of them. By doing this, the effects of a change in any of the other independent variables on the dependent variable can be studied by holding the other variables constant.
+
+
+# question 5
+
+## part 1
+
+```{r}
+library(wooldridge)
+
+df1 <- meapsingle
+help("meapsingle")
+mlr_1 <- lm(math4 ~ pctsgle ,df1)
+stargazer(mlr_1, type = "text")
+
+
+```
+
+There is a negative relationship with the percent of children not in married couple families and the percent satisfactory 4th grade math scores. The relationship suggests that a 1 unit increase in percent of children not in married couple familily homes has an expected decrease in percent satisfactory 4th grade math by 0.833%
+
+## ii 
+
+```{r}
+library(wooldridge)
+
+mlr_2 <- lm(math4 ~ pctsgle + lmedinc + free ,df1)
+stargazer(mlr_2, type = "text")
+
+
+cor((df1$pctsgle),df1$lmedinc, method="pearson",use="complete.obs")
+```
+
+The coefficient decreases significantly from -0.833 to -0.200
+
+This is because there is a large correlation between lmedinc and pctsgle. As well as large correlation between free and pctsgle. When we controll for these independent variables the expected change in math4 with a change in pctsgle, holding our other variables cosntant, decreases. 
+
+## iii
+
+```{r}
+cor(df1$lmedinc,df1$free) 
+```
+
+The correlation between lmedinc and free is -0.75. This makes sense because there is an inverse relationship between family income and a student's eligibility for a free lunch.
+
+
+## iv 
+
+No. We know the absolute value of the correlation is less than 1. This indicates a perfect linear relationship does not exist. So long as the perfect linear relationship does not exist we still benefit from including additional control variables to the funciton. 
+
+## v
+
+```{r}
+stargazer(mlr_1, type = "text")
+mlr_3 <- lm(math4 ~ lmedinc ,df1)
+stargazer(mlr_3, type = "text")
+mlr_4 <- lm(math4 ~  free ,df1)
+stargazer(mlr_4, type = "text")
+vif_pctsgle <- 1/(1-0.380)
+vif_lmedinc <- 1/(1-0.321)
+vif_free <- 1/(1-0.446)
+
+vif_free
+vif_lmedinc
+vif_pctsgle
+```
+Though the VIF is largest for the free variable, having knowledge of this does little to impact the relationship between pctsgle and math4
+
+
+## Question 6
+
+### Part I
+```{r}
+df <- htv
+
+ran <- range(df$educ)
+print(ran[2]-ran[1])
+
+```
+The Range of the educ variable is 14. 
+
+```{r}
+dfeduc <- htv %>% count(educ <= 12)
+dfeduc1 <- dfeduc[1,2]
+dfeduc2 <- dfeduc[2,2]
+dftotal <- dfeduc1 + dfeduc2
+dfperc <- dfeduc2/dftotal
+dfperc
+```
+The percent of men completed up to 12 grade is 56.75%
+
+```{r}
+mean(htv$educ)
+(mean(htv$motheduc) + mean(htv$fatheduc))/2
+```
+The avg educ for men is 13.04 years
+the avg for parents is 12.31 years, so men have a higher avg. 
+
+### Part II
+```{r}
+df2 <- lm(educ~motheduc+fatheduc, data = htv)
+stargazer(df2, type = "text")
+```
+
+On average, holding everying else constant, about 24.9% of the variation in education 
+is explained by parents education. 
+
+For every annual increase in a mother's education, the son's education will rise by
+.304 years.
+### Part III
+
+```{r}
+df3 <- lm(formula = educ ~ motheduc + fatheduc + abil, data = htv)
+stargazer(df3, type = "text")
+```
+Adding ability into the model does help to explain. This is shown in an increase
+in the explanatory significance from 24.9% to 42.8%  
+
+### Part IV
+
+```{r}
+abil.sq <- htv$abil^2
+
+amd <- lm(educ~motheduc+fatheduc+abil+abil.sq, data = htv)
+stargazer(amd, type= "text")
+```
+```{r}
+amd.df <- as.data.frame(amd[1])
+amd.df
+```
+```{r}
+abil.co <- amd.df[4,]
+abil.co.sq <- amd.df[5,]
+min.abil <- -abil.co / (abil.co.sq*2)
+min.abil
+```
+An ability level of -3.97 minimized predicted education.
+
+### Part V
+```{r}
+htv %>% count(htv$abil <= min.abil)
+```
+12 out of 1230 individuals have ability levels that are below -3.97. This is important to 
+know because it shows with men having a minimum educ, there are a small fraction below the
+reported -3.97.

@@ -1,0 +1,98 @@
+---
+title: "HW8_G11_CameronMiller"
+author: "Cameron Miller"
+date: "2022-11-01"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment = NA)
+library(dplyr)
+library(wooldridge)
+library(stargazer)
+```
+
+\newpage
+
+## Question 1
+Because funds and risktol are positively correlated, we can assume that 
+the asymptotic bias in $\hat{\beta}_1$ is positive.
+
+If we dropped risktol, then $\beta_1$ will become biased
+
+## Question 2
+
+### Part I
+
+```{r}
+df <- wage1
+reg <- lm(wage ~ educ + exper + tenure, df)
+stargazer(reg, type = "text")
+
+my_resid <- reg$residuals
+
+hist(my_resid, c= 'yellow', main = "Residual Model For Level-Level")
+
+```
+
+
+### Part II
+
+```{r}
+
+reg_log <- lm(log(wage) ~ educ + exper + tenure, df)
+stargazer(reg_log, type = "text")
+my_resid_log <- reg_log$residuals
+
+hist(my_resid_log, c= 'light green', main = "Residual Model For Log-Level")
+```
+
+
+### Part III
+Assumption number 6 is closer to being satisfied with the log-level model. 
+This is because it is more normally distributed than the level- level model. 
+
+## Question 3
+
+
+### Part I
+
+```{r}
+range(econmath$score)
+```
+Logically, because it is a percentage, the low / high values can be 0 / 100.
+By taking the range, we can see the actual low / high values are 19.5 / 98.4
+
+### Part II
+
+```{r}
+df2 <- econmath
+reg_econ <- lm(score ~ colgpa + actmth + acteng, df2)
+hist(reg_econ$residuals)
+```
+It is not normally distributed and therefor cannot hold under MLR.6
+If assumption 6 is not holding, there is no t-distribution and therefor you 
+cannot talk about significance. 
+
+### Part III
+
+```{r}
+summary(reg_econ)
+dim(econmath)
+```
+
+The t-stat for acteng is .466 and the p value is 64%.
+
+You can defend by saying that there are 856 observations and the central
+limit theorem should be present, so the numbers listed can be trusted. 
+
+
+
+
+
+
+
+
+
+
+
